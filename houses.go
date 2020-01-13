@@ -16,40 +16,36 @@ type House struct {
 	district           District
 }
 
-/*type HouseSorter struct {
-	houses []House
-	sorter func(i, j int) bool
-}*/
-var result []House
-
-func sortBy(houses []House, compare func(i, j int) bool) []House {
-	result = make([]House, len(houses))
+func sortBy(houses []House, compare func(a, b House) bool) []House {
+	result := make([]House, len(houses))
 	copy(result, houses)
 
-	sort.Slice(result, compare)
+	sort.Slice(result, func(i, j int) bool {
+		return compare(result[i], result[j])
+	})
 	return result
 }
 
 func sortByPriceAsc(houses []House) []House {
-	return sortBy(houses, func(i, j int) bool {
-		return result[i].price < result[j].price
+	return sortBy(houses, func(a, b House) bool {
+		return a.price < b.price
 	})
 }
 func sortByPriceDesc(houses []House) []House {
-	return sortBy(houses, func(i, j int) bool {
-		return result[i].price > result[j].price
+	return sortBy(houses, func(a, b House) bool {
+		return a.price > b.price
 	})
 }
 
 func sortByDistanceFromCenterAsc(houses []House) []House {
-	return sortBy(houses, func(i, j int) bool {
-		return result[i].distanceFromCenter < result[j].distanceFromCenter
+	return sortBy(houses, func(a, b House) bool {
+		return a.distanceFromCenter < b.distanceFromCenter
 	})
 }
 
 func sortByDistanceFromCenterDesc(houses []House) []House {
-	return sortBy(houses, func(i, j int) bool {
-		return result[i].distanceFromCenter > result[j].distanceFromCenter
+	return sortBy(houses, func(a, b House) bool {
+		return a.distanceFromCenter > b.distanceFromCenter
 	})
 }
 
