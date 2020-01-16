@@ -110,6 +110,7 @@ func searchByDistricts(houses []House, requireDistricts []District) []House {
 		for _, requireDistrict := range requireDistricts {
 			if house.district == requireDistrict {
 				tmpResult = append(tmpResult, house)
+				break
 			}
 		}
 	}
