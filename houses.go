@@ -49,76 +49,62 @@ func sortByDistanceFromCenterDesc(houses []House) []House {
 	})
 }
 
-func searchByMaxPrice(houses []House, priceLimit Rubles) []House {
+func searchBy(houses []House, filter func(tmpResult *[]House)) []House {
 	tmpResult := make([]House, 0, len(houses))
 
-	for _, house := range houses {
-		if house.price < priceLimit {
-			tmpResult = append(tmpResult, house)
-		}
-	}
+	filter(&tmpResult)
+
 	if len(tmpResult) == 0 {
 		return make([]House, 0)
 	}
-
 	result := make([]House, len(tmpResult))
 	copy(result, tmpResult)
 	return result
+}
+
+func searchByMaxPrice(houses []House, priceLimit Rubles) []House {
+	return searchBy(houses, func(tmpResult *[]House) {
+		for _, house := range houses {
+			if house.price < priceLimit {
+				*tmpResult = append(*tmpResult, house)
+			}
+		}
+	})
 }
 
 func searchByIntervalPrice(houses []House, lowerPriceLimit, upperPriceLimit Rubles) []House {
-	tmpResult := make([]House, 0, len(houses))
-
-	for _, house := range houses {
-		if house.price < lowerPriceLimit {
-			continue
-		}
-		if house.price <= upperPriceLimit {
-			tmpResult = append(tmpResult, house)
-		}
-	}
-	if len(tmpResult) == 0 {
-		return make([]House, 0)
-	}
-
-	result := make([]House, len(tmpResult))
-	copy(result, tmpResult)
-	return result
+	return searchBy(houses, func(tmpResult *[]House){
+		for _, house := range houses {
+				if house.price < lowerPriceLimit {
+					continue
+				}
+				if house.price <= upperPriceLimit {
+					*tmpResult = append(*tmpResult, house)
+				}
+			}
+	})
 }
 
 func searchByDistrict(houses []House, requireDistrict District) []House {
-	tmpResult := make([]House, 0, len(houses))
-
-	for _, house := range houses {
-		if house.district == requireDistrict {
-			tmpResult = append(tmpResult, house)
+	return searchBy(houses, func(tmpResult *[]House) {
+		for _, house := range houses {
+			if house.district == requireDistrict {
+				*tmpResult = append(*tmpResult, house)
+			}
 		}
-	}
-	if len(tmpResult) == 0 {
-		return make([]House, 0)
-	}
+	})
 
-	result := make([]House, len(tmpResult))
-	copy(result, tmpResult)
-	return result
 }
 
 func searchByDistricts(houses []House, requireDistricts []District) []House {
-	tmpResult := make([]House, 0, len(houses))
-
-	for _, house := range houses {
-		for _, requireDistrict := range requireDistricts {
-			if house.district == requireDistrict {
-				tmpResult = append(tmpResult, house)
-				break
+	return searchBy(houses, func(tmpResult *[]House) {
+		for _, house := range houses {
+			for _, requireDistrict := range requireDistricts {
+				if house.district == requireDistrict {
+					*tmpResult = append(*tmpResult, house)
+					break
+				}
 			}
 		}
-	}
-	if len(tmpResult) == 0 {
-		return make([]House, 0)
-	}
-
-	result := make([]House, len(tmpResult))
-	copy(result, tmpResult)
-	return result
+	})
 }
